@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file
+ * Language header module.
+ */
+
+define('LANGUAGE_HEADER_HEADER', 'X-Accept-Language');
+define('LANGUAGE_HEADER_PROVIDER', 'language_header');
+define('LANGUAGE_HEADER_CONFIG_PATH', 'admin/config/regional/language/configure/header');
+
+/**
+ * Implements hook_menu().
+ */
+function language_header_menu() {
+  return array(
+    LANGUAGE_HEADER_CONFIG_PATH => array(
+      'type' => MENU_VISIBLE_IN_BREADCRUMB,
+      'file' => 'language_header.admin.inc',
+      'title' => 'Configure HTTP header language negotiation',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('language_header_admin_form'),
+      'access arguments' => array('administer languages'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_language_negotiation_info().
+ */
+function language_header_language_negotiation_info() {
+  return array(
+    LANGUAGE_HEADER_PROVIDER => array(
+      'name' => t('HTTP header'),
+      'weight' => -5,
+      'config' => LANGUAGE_HEADER_CONFIG_PATH,
+      'file' => drupal_get_path('module', 'language_header') . '/language_header.module',
+      'description' => t('Determine the language from HTTP header'),
+      'callbacks' => array(
+        'language' => 'language_header_language',
+      ),
+    ),
+  );
+}
+
+/**
+ * Identify language from a custom HTTP header.
+ *
+ * @see language_initialize()
+ * @see language_provider_invoke()
+ *
+ * @param \stdClass[] $languages
+ *   An associative array of enabled languages.
+ *
+ * @return string|bool
+ *   Valid language code or FALSE if header is not set or language
+ *   code is not valid. FALSE needs to be returned to allow other
+ *   language providers to determine the language code.
+ */
+function language_header_language(array $languages) {
+  $header = language_header_name();
+
+  return isset($_SERVER[$header], $languages[$_SERVER[$header]]) ? $_SERVER[$header] : FALSE;
+}
+
+/**
+ * Returns the name of HTTP header where the language code should be set.
+ *
+ * @return string
+ *   Name of HTTP header.
+ */
+function language_header_name() {
+  return 'HTTP_' . str_replace('-', '_', strtoupper(
+    variable_get('language_header_header', LANGUAGE_HEADER_HEADER)
+  ));
+}

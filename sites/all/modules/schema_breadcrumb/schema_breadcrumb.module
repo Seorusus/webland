@@ -1,0 +1,25 @@
+<?php
+/**
+ * @file
+ * This is a simple module that adds schema attributes to breadcrumbs in drupal.
+ *
+ * @category schema
+ *
+ * @package schema_breadcrumb
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function schema_breadcrumb_theme($hook, $type, $theme, $path) {
+  $theme = array(
+    'schema_breadcrumb' => array(
+      'render element' => 'breadcrumb',
+      'base hook' => 'breadcrumb',
+      'template' => 'schema_breadcrumb',
+      'path' => drupal_get_path('module', 'schema_breadcrumb') . '/templates',
+    ),
+  );
+
+  return $theme;
+}

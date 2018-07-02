@@ -1,0 +1,61 @@
+<?php
+/**
+ * @file
+ * Language header (Test).
+ */
+
+/**
+ * Class LanguageHeaderTestCase.
+ */
+class LanguageHeaderTestCase extends \DrupalWebTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('Language HTTP Header'),
+      'group' => t('Multilingual - Internationalization'),
+      'description' => t('Testing functionality of language header.'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    // Enable the module for testing.
+    parent::setUp('language_header');
+  }
+
+  /**
+   * Test configuration form of "language_header" provider.
+   */
+  public function testConfigurationForm() {
+    $routes = language_header_menu();
+
+    $this->drupalLogin($this->drupalCreateUser($routes[LANGUAGE_HEADER_CONFIG_PATH]['access arguments']));
+    $this->drupalGet(LANGUAGE_HEADER_CONFIG_PATH);
+    $this->assertResponse(200);
+    // @see language_header_admin_form()
+    $this->assertFieldByName('language_header_header', variable_get('language_header_header', LANGUAGE_HEADER_HEADER));
+    $this->drupalPost(LANGUAGE_HEADER_CONFIG_PATH, array('language_header_header' => 'Test'), t('Save configuration'));
+    $this->assertFieldByName('language_header_header', 'Test');
+  }
+
+  /**
+   * Simulate HTTP header and test language detection.
+   *
+   * @param string $langcode
+   *   Valid language code for testing.
+   */
+  public function testLanguageDetection($langcode = 'de') {
+    // Simulate HTTP header.
+    $_SERVER[language_header_name()] = $langcode;
+    // Activate a language.
+    locale_add_language($langcode);
+    // Check that language has been correctly recognized.
+    $this->assertIdentical($langcode, language_provider_invoke(LANGUAGE_HEADER_PROVIDER)->language);
+  }
+
+}

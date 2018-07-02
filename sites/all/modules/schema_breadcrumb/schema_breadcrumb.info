@@ -1,0 +1,3 @@
+name = Schema Breadcrumb
+description = Adds Schema to the sites breadcrumbs
+core = 7.x

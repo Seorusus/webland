@@ -1,0 +1,12 @@
+<?php
+/**
+ * @file
+ * Install, update, uninstall functions for the Language HTTP Header module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function language_header_uninstall() {
+  variable_del('language_header_header');
+}

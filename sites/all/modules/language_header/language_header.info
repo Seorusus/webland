@@ -1,0 +1,17 @@
+name = Language HTTP Header
+description = Use custom HTTP header for selecting content language
+package = Multilingual - Internationalization
+core = 7.x
+
+configure = admin/config/regional/language/configure/header
+
+files[] = tests/language_header.test
+
+dependencies[] = locale
+
+; Information added by Drupal.org packaging script on 2016-09-08
+version = "7.x-1.2"
+core = "7.x"
+project = "language_header"
+datestamp = "1473320343"
+
